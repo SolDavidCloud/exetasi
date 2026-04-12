@@ -110,5 +110,5 @@ Standard commands from the repo root (see `Build & Run` section above and root `
 - The backend tests use aiosqlite (in-memory), so they run without a PostgreSQL instance.
 - The frontend dev server proxies `/api` to `http://127.0.0.1:8000`; both servers must be running for full-stack testing.
 - `uv` is installed via `pip install uv` (the `astral.sh` install script is blocked by egress restrictions).
-- Always use `uv sync --frozen --extra dev` (not plain `uv sync --extra dev`) to avoid modifying `backend/uv.lock`. The lockfile has an `exclude-newer` option that newer uv versions strip, causing a dirty git state.
+- **Critical**: Set `UV_FROZEN=1` in your shell environment (already added to `~/.bashrc`) to prevent any `uv` command (`uv sync`, `uv run`, etc.) from modifying `backend/uv.lock`. The lockfile has an `exclude-newer` option that the installed uv version strips, causing a dirty git state. Alternatively, pass `--frozen` explicitly to each uv command.
 - The frontend in dev mode sets `EXETASI_API_BASE_URL` to `http://127.0.0.1:8000` (cross-origin to the backend). The backend CORS config allows `http://127.0.0.1:9000`. If you see `Failed to fetch` boot errors, ensure the backend is running before starting the frontend.
