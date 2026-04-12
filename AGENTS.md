@@ -64,3 +64,49 @@ Entity hierarchy: `User → Organization → Exam → Version → Section → Qu
 - Manually graded answers surface in the Grading Queue
 
 See `Requirements.md` for complete specification including scoring formulas, roles, analytics, and deployment targets.
+
+## Cursor Cloud specific instructions
+
+### Services overview
+
+| Service | Port | Start command |
+|---------|------|---------------|
+| PostgreSQL 16 | 5432 | `sudo pg_ctlcluster 16 main start` (installed via apt; Docker pull is blocked by egress restrictions) |
+| FastAPI backend | 8000 | `ENABLE_DEV_AUTH=true make dev-backend` |
+| Quasar frontend | 9000 | `make dev-frontend` |
+
+### PostgreSQL
+
+Docker image pulls are blocked by network egress restrictions in Cloud Agent VMs. PostgreSQL 16 is installed directly via `apt` instead of Docker Compose. The database, user, and password all use `exetasi` (matching `docker-compose.yml` defaults). Before starting the backend, ensure PostgreSQL is running:
+
+```bash
+sudo pg_ctlcluster 16 main start
+```
+
+If the `exetasi` database/user doesn't exist yet (first run only):
+
+```bash
+sudo -u postgres psql -c "CREATE USER exetasi WITH PASSWORD 'exetasi';"
+sudo -u postgres psql -c "CREATE DATABASE exetasi OWNER exetasi;"
+```
+
+Then run migrations: `cd backend && uv run alembic upgrade head`
+
+### Dev authentication
+
+Set `ENABLE_DEV_AUTH=true` when starting the backend to enable the development-only login endpoint. The login page at `/#/login` will show a "Sign in (development)" form where you can enter any username — it auto-creates users.
+
+### Quality checks
+
+Standard commands from the repo root (see `Build & Run` section above and root `package.json`):
+
+- `pnpm lint` — ESLint
+- `pnpm test` — frontend Vitest
+- `cd backend && uv run pytest` — backend tests (uses aiosqlite, no Postgres needed)
+- `pnpm build` — production SPA build
+
+### Caveats
+
+- The backend tests use aiosqlite (in-memory), so they run without a PostgreSQL instance.
+- The frontend dev server proxies `/api` to `http://127.0.0.1:8000`; both servers must be running for full-stack testing.
+- `uv` is installed via `pip install uv` (the `astral.sh` install script is blocked by egress restrictions).
