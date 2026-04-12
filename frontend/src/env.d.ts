@@ -5,3 +5,11 @@ declare namespace NodeJS {
     VUE_ROUTER_BASE: string | undefined;
   }
 }
+
+interface ImportMetaEnv {
+  readonly EXETASI_API_BASE_URL: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}

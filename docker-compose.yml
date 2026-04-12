@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: exetasi
+      POSTGRES_PASSWORD: exetasi
+      POSTGRES_DB: exetasi
+    ports:
+      - '5432:5432'
+    volumes:
+      - exetasi_pgdata:/var/lib/postgresql/data
+
+volumes:
+  exetasi_pgdata:

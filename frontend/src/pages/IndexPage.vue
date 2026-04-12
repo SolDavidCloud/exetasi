@@ -1,43 +1,61 @@
 <template>
-  <q-page class="row items-center justify-evenly">
-    <example-component
-      title="Example component"
-      active
-      :todos="todos"
-      :meta="meta"
-    ></example-component>
+  <q-page class="q-pa-md">
+    <div class="column q-gutter-md" style="max-width: 720px">
+      <div>
+        <h1 class="text-h4">{{ t('home.title') }}</h1>
+        <div class="text-body1 text-grey-7">{{ t('home.lead') }}</div>
+      </div>
+
+      <div class="row q-gutter-sm items-center">
+        <q-btn
+          color="primary"
+          :loading="loading"
+          :label="t('home.pingBackend')"
+          @click="pingBackend"
+        />
+        <div v-if="statusText" class="text-body2">{{ statusText }}</div>
+      </div>
+    </div>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import type { Todo, Meta } from 'components/models';
-import ExampleComponent from 'components/ExampleComponent.vue';
+import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-const todos = ref<Todo[]>([
-  {
-    id: 1,
-    content: 'ct1'
-  },
-  {
-    id: 2,
-    content: 'ct2'
-  },
-  {
-    id: 3,
-    content: 'ct3'
-  },
-  {
-    id: 4,
-    content: 'ct4'
-  },
-  {
-    id: 5,
-    content: 'ct5'
+import { getApiClient } from 'src/api/client';
+
+const { t } = useI18n();
+
+const loading = ref(false);
+const status = ref<string | null>(null);
+const errored = ref(false);
+
+const statusText = computed(() => {
+  if (errored.value) {
+    return t('home.backendError');
   }
-]);
-
-const meta = ref<Meta>({
-  totalCount: 1200
+  if (status.value) {
+    return t('home.backendOk', { status: status.value });
+  }
+  return '';
 });
+
+async function pingBackend() {
+  loading.value = true;
+  errored.value = false;
+  status.value = null;
+  try {
+    const { data, error } = await getApiClient().GET('/api/v1/health');
+    if (error) {
+      errored.value = true;
+      return;
+    }
+    status.value = data?.status ?? t('home.unknown');
+  } catch {
+    errored.value = true;
+  } finally {
+    loading.value = false;
+  }
+}
 </script>

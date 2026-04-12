@@ -5,8 +5,8 @@
         404
       </div>
 
-      <div class="text-h2" style="opacity:.4">
-        Oops. Nothing here...
+      <div class="text-h2" style="opacity: 0.4">
+        {{ t('error.notFound') }}
       </div>
 
       <q-btn
@@ -15,9 +15,15 @@
         text-color="blue"
         unelevated
         to="/"
-        label="Go Home"
+        :label="t('error.goHome')"
         no-caps
       />
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
+</script>

@@ -12,9 +12,7 @@ export default defineConfig((ctx) => {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: [
-      'i18n'
-    ],
+    boot: ['i18n', 'api', 'auth'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
     css: [
@@ -55,6 +53,12 @@ export default defineConfig((ctx) => {
 
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
+      env: {
+        EXETASI_API_BASE_URL:
+          process.env.EXETASI_API_BASE_URL ??
+          (ctx.dev ? 'http://127.0.0.1:8000' : ''),
+      },
+
       // publicPath: '/',
       // analyze: true,
       // env: {},
@@ -94,7 +98,14 @@ export default defineConfig((ctx) => {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#devserver
     devServer: {
       // https: true,
-      open: true // opens browser window automatically
+      // Avoid auto-opening a browser during Playwright runs / CI.
+      open: process.env.CI ? false : true,
+      proxy: {
+        '/api': {
+          target: 'http://127.0.0.1:8000',
+          changeOrigin: true,
+        },
+      },
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework

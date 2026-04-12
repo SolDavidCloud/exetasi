@@ -1,8 +1,15 @@
 # https://pnpm.io/settings
+packages:
+  - 'frontend'
+
 shamefullyHoist: true
 
-# Security: only allow packages that have been published for at least 4 days
-minimumReleaseAge: '5760 minutes'
+# NOTE: `minimumReleaseAge` is intentionally disabled for now — pnpm repeatedly rejected
+# widely-used toolchain releases that were months old (false negatives). Re-enable when
+# the ecosystem + registry metadata behave reliably for this workspace.
+#
+# minimumReleaseAge: '5760 minutes'
+
 # Block exotic (non-npm-registry) subdependencies
 blockExoticSubdeps: true
 

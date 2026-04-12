@@ -1,0 +1,58 @@
+{
+  "name": "exetasi-frontend",
+  "version": "0.0.1",
+  "description": "Free quiz and exam webapp",
+  "productName": "exetasi",
+  "author": "David Jonathan Sol Llaven <soldavid@gmail.com>",
+  "license": "CC-BY-NC-SA-4.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "lint": "eslint -c ./eslint.config.js \"./src*/**/*.{ts,js,cjs,mjs,vue}\"",
+    "format": "prettier --write \"**/*.{js,ts,vue,css,scss,html,md,json}\" --ignore-path .gitignore",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "dev": "quasar dev",
+    "build": "quasar build",
+    "codegen": "node ./scripts/openapi-codegen.mjs",
+    "postinstall": "quasar prepare"
+  },
+  "dependencies": {
+    "@quasar/extras": "^1.18.0",
+    "openapi-fetch": "^0.17.0",
+    "pinia": "^3.0.4",
+    "quasar": "^2.19.3",
+    "vue": "^3.5.32",
+    "vue-i18n": "^11.3.2",
+    "vue-router": "^5.0.4"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@intlify/unplugin-vue-i18n": "^11.0.7",
+    "@playwright/test": "^1.51.1",
+    "@quasar/app-vite": "^2.6.0",
+    "@types/node": "^22.19.17",
+    "@vue/eslint-config-prettier": "^10.2.0",
+    "@vue/eslint-config-typescript": "^14.7.0",
+    "@vue/test-utils": "^2.4.6",
+    "autoprefixer": "^10.4.27",
+    "eslint": "^9.39.4",
+    "eslint-plugin-vue": "^10.8.0",
+    "globals": "^17.4.0",
+    "jsdom": "^26.0.0",
+    "openapi-typescript": "^7.8.0",
+    "prettier": "^3.8.2",
+    "typescript": "^5.9.3",
+    "vite-plugin-checker": "^0.12.0",
+    "vue-eslint-parser": "^10.4.0",
+    "vue-tsc": "^3.2.6",
+    "vitest": "^3.1.1"
+  },
+  "engines": {
+    "node": "^28 || ^26 || ^24 || ^22.12",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1",
+    "pnpm": ">= 10.0.0"
+  }
+}
