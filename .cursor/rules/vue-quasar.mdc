@@ -1,0 +1,64 @@
+---
+description: Vue 3 + Quasar component patterns for Exetasi
+globs: src/**/*.vue
+alwaysApply: false
+---
+
+# Vue + Quasar Conventions
+
+## SFC Structure
+```vue
+<script setup lang="ts">
+// imports, composables, logic
+</script>
+
+<template>
+  <!-- markup -->
+</template>
+
+<style scoped lang="scss">
+/* component-specific overrides only */
+</style>
+```
+
+- **No** `export default defineComponent()` — setup script only
+- **No** `defineComponent` wrapper — `<script setup>` makes it unnecessary
+
+## Props & Emits
+```ts
+// ✅ typed inline
+const props = defineProps<{ examId: string; readonly?: boolean }>()
+const emit = defineEmits<{ submit: [id: string]; cancel: [] }>()
+
+// ✅ two-way binding
+const model = defineModel<string>()
+```
+
+## Quasar Components
+- Prefer `QBtn` over `<button>`, `QInput` over `<input>`, `QCard` over `<div class="card">`, etc.
+- Use `QLayout` + `QPage` for page-level structure
+- Use Quasar's `useQuasar()` for dialogs, notify, loading — not custom implementations
+
+## Pinia in Components
+```ts
+// ✅ always destructure with storeToRefs for reactivity
+const examStore = useExamStore()
+const { currentExam, isLoading } = storeToRefs(examStore)
+```
+
+## i18n
+```ts
+const { t } = useI18n()
+// ✅
+<QBtn :label="t('exam.start')" />
+// ❌
+<QBtn label="Start Exam" />
+```
+
+## Routing
+```ts
+const router = useRouter()
+const route = useRoute()
+// Use named routes, not hardcoded paths
+router.push({ name: 'exam-take', params: { id: examId } })
+```

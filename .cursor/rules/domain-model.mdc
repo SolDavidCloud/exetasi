@@ -1,0 +1,46 @@
+---
+description: Exetasi domain model — entity hierarchy, roles, and key business rules
+alwaysApply: true
+---
+
+# Domain Model
+
+Full specification: `Requirements.md`. Key facts for feature work.
+
+## Entity Hierarchy
+```
+User
+└── Organization (personal org auto-created; user can belong to many)
+    └── Exam (archived, not deleted)
+        └── Version (exactly one active at a time; activating auto-deactivates previous)
+            └── Section (draws N questions from its pool per attempt)
+                └── Question (pool member; min 1 phrasing; can move between sections)
+                    └── Answer / Blank / Item / Pair
+```
+
+## Roles (per Organization)
+| Role | Key permissions |
+|------|----------------|
+| Owner | Full control, manage members, delete org, bulk-delete results |
+| Editor | Create/edit exams, manage restricted-exam allowlists |
+| Grader | Grade manual questions, view analytics |
+| Viewer | Read-only: results, analytics, exam details |
+
+## Question Types
+| Type | Grading |
+|------|---------|
+| Multiple choice | Auto (% weights); optional negative scoring for wrong picks |
+| Open-ended | Manual; configurable char limit (default 255) |
+| Fill-in-the-blank | Per-blank: exact match, Python regex, or manual; `{{n}}` syntax |
+| Drag-and-drop ordering | Auto: all-or-nothing or partial `(correct/total × pts)` |
+| Matching | Auto: all-or-nothing or partial `(correct pairs/left items × pts)`; one-to-one |
+| Informational | Unscored |
+
+## Key Business Rules
+- Usernames are globally unique but changeable; internal IDs never change
+- Personal org slug = username slug — changes when username changes (warn users)
+- Section "questions to draw" must be 1 ≤ N ≤ pool size; unset = use all
+- Attempt history shows names snapshotted at submission time
+- Percentage approval threshold = `pct × max_possible_score` for that attempt
+- Grading queue locks an attempt while a grader is working; lock expires on idle timeout
+- All UI strings must use i18n keys — no hardcoded copy

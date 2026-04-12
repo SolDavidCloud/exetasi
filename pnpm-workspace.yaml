@@ -1,6 +1,11 @@
 # https://pnpm.io/settings
 shamefullyHoist: true
 
+# Security: only allow packages that have been published for at least 4 days
+minimumReleaseAge: '5760 minutes'
+# Block exotic (non-npm-registry) subdependencies
+blockExoticSubdeps: true
+
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - esbuild

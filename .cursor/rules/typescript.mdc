@@ -1,0 +1,62 @@
+---
+description: TypeScript conventions for Exetasi (strict mode)
+globs: src/**/*.ts
+alwaysApply: false
+---
+
+# TypeScript Conventions
+
+Strict mode is enabled. Follow these rules in all `.ts` files and `<script setup>` blocks.
+
+## Types
+```ts
+// ✅ interface for object shapes
+interface Exam { id: string; name: string; archived: boolean }
+
+// ✅ type for unions, intersections, mapped types
+type QuestionType = 'multiple-choice' | 'open-ended' | 'fill-in-the-blank' | 'ordering' | 'matching' | 'informational'
+type PartialExam = Partial<Exam>
+
+// ❌ never use any
+const data: any = ...
+
+// ❌ no unchecked casts — add a comment if unavoidable
+const el = ref as HTMLInputElement  // must have justification comment
+```
+
+## Null Safety
+```ts
+// ✅ optional chaining and nullish coalescing
+const name = exam?.version?.name ?? 'Untitled'
+
+// ❌ non-null assertions without comment
+const name = exam!.name
+```
+
+## Async / Error Handling
+```ts
+// ✅ always handle errors explicitly
+try {
+  await submitAttempt(id)
+} catch (err) {
+  console.error('Failed to submit attempt', err)
+  notify.error(t('attempt.submitError'))
+}
+
+// ❌ silent catch
+try { ... } catch {}
+```
+
+## Pinia Stores
+```ts
+// ✅ setup syntax
+export const useExamStore = defineStore('exam', () => {
+  const exams = ref<Exam[]>([])
+  async function fetchExams() { ... }
+  return { exams, fetchExams }
+})
+```
+
+## Imports
+- Use path aliases where configured (`src/` mapped as needed via Vite)
+- Import Quasar config utilities from `#q-app/wrappers`
