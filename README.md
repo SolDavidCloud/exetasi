@@ -1,6 +1,9 @@
 # exetasi (exetasi)
 
 Free quiz and exam webapp
+
+Implementation plan: [docs/plans/exetasi-implementation-plan.md](docs/plans/exetasi-implementation-plan.md).
+
 ## Install the dependencies
 ```bash
 yarn
