@@ -5,17 +5,22 @@ alwaysApply: true
 
 # Exetasi Project Overview
 
-Quiz and exam SPA. Full spec in `Requirements.md`.
+Quiz and exam webapp (monorepo). Full spec in `Requirements.md`.
 
 ## Stack
-- Frontend: **Quasar 2** (Vue 3 / TypeScript), hash-mode SPA + Capacitor mobile
-- Backend: **FastAPI** (Python) — separate project, communicates via REST
-- Database: **PostgreSQL**
+- Frontend: **Quasar 2** (Vue 3 / TypeScript) in `frontend/`, hash-mode SPA + Capacitor mobile
+- Backend: **FastAPI** (Python) in `backend/`, REST API
+- Database: **PostgreSQL** (root `docker-compose.yml`; `make db-up` from repo root)
 - State: **Pinia** | Routing: **Vue Router 4** | i18n: **vue-i18n 11**
 
 ## Commands
+Repository root / `frontend/` as appropriate:
+
 ```bash
-pnpm dev      # dev server
+make db-up                              # Postgres via docker compose (default)
+make db-up COMPOSE='nerdctl compose'    # same via containerd + nerdctl
+
+pnpm dev      # dev server (workspace → frontend)
 pnpm build    # production build
 pnpm lint     # ESLint
 pnpm format   # Prettier

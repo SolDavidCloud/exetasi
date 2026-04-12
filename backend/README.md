@@ -15,3 +15,5 @@ uv run pytest
 ```
 
 Set `DATABASE_URL` for PostgreSQL (see root `docker-compose.yml`). For tests, `DATABASE_URL` defaults to the same compose URL if unset.
+
+Start Postgres from the repo root with `make db-up`, or with containerd: `make db-up COMPOSE='nerdctl compose'` (see root `README.md`).

@@ -8,7 +8,11 @@ Implementation plan: [docs/plans/exetasi-implementation-plan.md](docs/plans/exet
 
 - [Node.js](https://nodejs.org/) 22+ and [pnpm](https://pnpm.io/) 10+
 - [uv](https://docs.astral.sh/uv/) (Python 3.12+)
-- [Docker](https://docs.docker.com/get-docker/) (optional, for PostgreSQL)
+- **PostgreSQL via Compose** — either:
+  - [Docker](https://docs.docker.com/get-docker/) with Compose (`docker compose`), or
+  - [containerd](https://containerd.io/) + [nerdctl](https://github.com/containerd/nerdctl) with the Compose subcommand (`nerdctl compose`; needs CNI for published ports)
+
+Check your Compose CLI: `make db-verify` (Docker) or `make db-verify COMPOSE='nerdctl compose'` (nerdctl).
 
 ## Install
 
@@ -21,14 +25,26 @@ cd backend && uv sync --extra dev
 
 ## Database (local)
 
+**Docker (default):** the Makefile uses `docker compose` unless you override `COMPOSE`.
+
 ```bash
 make db-up
 cd backend && uv run alembic upgrade head
 ```
 
+**containerd + nerdctl:** same `docker-compose.yml`, pass Compose explicitly (quote the value so Make treats it as one assignment):
+
+```bash
+make db-up COMPOSE='nerdctl compose'
+make db-down COMPOSE='nerdctl compose'   # stop and remove containers/network
+make db-verify COMPOSE='nerdctl compose'  # optional: show compose version
+```
+
+Credentials and port match `docker-compose.yml`: user, password, and database **`exetasi`**, host **`127.0.0.1`**, port **`5432`**.
+
 ## Develop
 
-Run **PostgreSQL** (`make db-up`), apply migrations, then start **backend** and **frontend** in two terminals:
+Run **PostgreSQL** (`make db-up` or `make db-up COMPOSE='nerdctl compose'`), apply migrations, then start **backend** and **frontend** in two terminals:
 
 ```bash
 make dev-backend

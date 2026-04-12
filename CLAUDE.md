@@ -16,6 +16,23 @@ Free, open-source quiz and exam web application. See `Requirements.md` for the f
 
 ## Commands
 
+**Monorepo (repository root):**
+
+```bash
+pnpm install
+make install            # pnpm + backend uv sync
+
+make db-up              # PostgreSQL: default is `docker compose`
+make db-up COMPOSE='nerdctl compose'   # containerd + nerdctl (quote the assignment)
+make db-down            # optional: same COMPOSE=… when not using Docker
+make db-verify          # print `$(COMPOSE) version`
+
+make dev-backend        # uvicorn :8000
+make dev-frontend       # Quasar in frontend/
+```
+
+**Frontend package** (`frontend/` or `pnpm --dir frontend`):
+
 ```bash
 pnpm dev        # start dev server (opens browser automatically)
 pnpm build      # production SPA build
@@ -26,15 +43,17 @@ pnpm format     # Prettier
 ## Project Structure
 
 ```
-src/
-  assets/       static assets
-  boot/         Quasar boot files (run before app mount)
-  components/   shared components
-  css/          global SCSS; quasar.variables.scss for design tokens
-  i18n/         translation files (en-US/index.ts, ...)
-  layouts/      page wrapper layouts
-  pages/        route-level page components
-  router/       Vue Router setup
+frontend/
+  src/
+    assets/       static assets
+    boot/         Quasar boot files (run before app mount)
+    components/   shared components
+    css/          global SCSS; quasar.variables.scss for design tokens
+    i18n/         translation files (en-US/index.ts, ...)
+    layouts/      page wrapper layouts
+    pages/        route-level page components
+    router/       Vue Router setup
+backend/          FastAPI app (see backend/README.md)
 ```
 
 ## Code Conventions
@@ -61,11 +80,11 @@ src/
 
 ### Styling
 - Quasar utility classes preferred over custom CSS where possible
-- Custom SCSS lives in `src/css/`; component-scoped styles for component-specific overrides
+- Custom SCSS lives in `frontend/src/css/`; component-scoped styles for component-specific overrides
 
 ## Architecture Notes
 
-- This repo is the **frontend SPA only**. The FastAPI backend communicates via REST API.
+- **Monorepo:** Quasar SPA lives under `frontend/`; FastAPI service under `backend/`. They communicate via REST (dev: Quasar proxies `/api` to the backend).
 - Router mode is **hash** (`/#/` URLs) for maximum static-hosting compatibility
 - Images are stored externally (S3/GCS/R2/local disk) — never commit binary assets beyond `public/icons`
 - i18n is structured for future RTL/multi-language support — use string keys from day one

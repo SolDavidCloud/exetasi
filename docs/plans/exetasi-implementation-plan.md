@@ -139,7 +139,7 @@ exetasi/
 **Root-level:**
 
 - `docker-compose.yml` with PostgreSQL 16
-- `Makefile` with targets: `dev-backend`, `dev-frontend`, `dev` (both), `test`, `lint`, `codegen`
+- `Makefile` with targets: `dev-backend`, `dev-frontend`, `dev` (both), `test`, `lint`, `codegen`, `db-up`, `db-down`, `db-verify` — `COMPOSE` defaults to `docker compose`; use `COMPOSE='nerdctl compose'` for containerd + nerdctl
 
 **Exit criteria:** Both servers start, frontend can call backend health endpoint, one passing test on each side.
 

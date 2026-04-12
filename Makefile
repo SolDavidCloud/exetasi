@@ -1,14 +1,23 @@
-.PHONY: dev dev-frontend dev-backend test lint codegen install db-up db-down
+# Compose CLI for docker-compose.yml. Default matches Docker; override for containerd, e.g.:
+#   make db-up COMPOSE='nerdctl compose'
+# (Quote the value so Make sees a single assignment.)
+COMPOSE ?= docker compose
+
+.PHONY: dev dev-frontend dev-backend test lint codegen install db-up db-down db-verify
 
 install:
 	pnpm install
 	cd backend && uv sync --extra dev
 
+db-verify:
+	@echo 'Compose command: $(COMPOSE)'
+	@$(COMPOSE) version
+
 db-up:
-	docker compose up -d postgres
+	$(COMPOSE) up -d postgres
 
 db-down:
-	docker compose down
+	$(COMPOSE) down
 
 dev-frontend:
 	pnpm --dir frontend dev

@@ -10,15 +10,38 @@ Free, open-source quiz and exam web application. Full product specification is i
 - **State**: Pinia; **Routing**: Vue Router 4 (hash mode); **i18n**: vue-i18n 11
 - **Package manager**: pnpm (never npm or yarn)
 
+## Monorepo layout
+
+- **Frontend:** `frontend/` (Quasar); run pnpm commands with `pnpm --dir frontend …` or `cd frontend`
+- **Backend:** `backend/` (FastAPI + uv)
+- **Postgres:** root `docker-compose.yml`; `Makefile` targets `db-up`, `db-down`, `db-verify`
+
 ## Build & Run
 
+From the **repository root** (unless noted):
+
 ```bash
-pnpm install    # install dependencies
+pnpm install              # workspace + frontend deps
+cd backend && uv sync --extra dev   # Python deps (or: make install)
+
+make db-up                # PostgreSQL (docker compose by default)
+make db-up COMPOSE='nerdctl compose'   # same stack via containerd + nerdctl
+cd backend && uv run alembic upgrade head
+
+make dev-backend          # FastAPI :8000
+make dev-frontend         # Quasar dev server (see frontend/package.json)
+```
+
+Frontend-only shortcuts from `frontend/`:
+
+```bash
 pnpm dev        # dev server with hot reload
 pnpm build      # production build → dist/spa/
 pnpm lint       # ESLint check
 pnpm format     # Prettier format
 ```
+
+Root workspace scripts (`pnpm lint`, `pnpm test`, etc.) run the configured workspace packages; see root `package.json`.
 
 ## Code Rules
 
@@ -27,7 +50,7 @@ pnpm format     # Prettier format
 3. **Components**: PascalCase filenames; use Quasar components over native HTML
 4. **Pinia stores**: setup-syntax `defineStore`; one store per domain concept
 5. **i18n**: all user-visible strings via `t('key')` — no hardcoded UI copy
-6. **Styles**: Quasar utilities first; SCSS in `src/css/`; scoped styles in SFCs
+6. **Styles**: Quasar utilities first; SCSS in `frontend/src/css/`; scoped styles in SFCs
 7. **Imports**: `#q-app/wrappers` for Quasar config types; auto-imports are active
 
 ## Domain Model
