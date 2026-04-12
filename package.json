@@ -4,6 +4,7 @@
   "description": "Free quiz and exam webapp",
   "productName": "exetasi",
   "author": "David Jonathan Sol Llaven <soldavid@gmail.com>",
+  "license": "CC-BY-NC-SA-4.0",
   "type": "module",
   "private": true,
   "scripts": {
