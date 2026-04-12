@@ -15,7 +15,9 @@ export default {
     loginLead: 'Use a configured OAuth provider or local development sign-in.',
     loginNav: 'Sign in',
     provider: {
+      google: 'Continue with Google',
       github: 'Continue with GitHub',
+      gitlab: 'Continue with GitLab',
     },
     devLoginHint: 'Local development only (requires ENABLE_DEV_AUTH on the API).',
     username: 'Username',

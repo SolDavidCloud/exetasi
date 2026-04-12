@@ -14,6 +14,11 @@ class Settings(BaseSettings):
     public_api_base_url: str = "http://127.0.0.1:8000"
     github_client_id: str = ""
     github_client_secret: str = ""
+    google_client_id: str = ""
+    google_client_secret: str = ""
+    gitlab_client_id: str = ""
+    gitlab_client_secret: str = ""
+    gitlab_oauth_base_url: str = "https://gitlab.com"
     enable_dev_auth: bool = False
 
 

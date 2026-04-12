@@ -8,10 +8,26 @@
 
       <q-card-section class="q-gutter-md">
         <q-btn
+          outline
+          color="primary"
+          class="full-width"
+          :label="t('auth.provider.google')"
+          :href="oauthStartUrl('/api/v1/auth/google/start')"
+          type="a"
+        />
+        <q-btn
           color="dark"
           class="full-width"
           :label="t('auth.provider.github')"
-          :href="githubStartUrl"
+          :href="oauthStartUrl('/api/v1/auth/github/start')"
+          type="a"
+        />
+        <q-btn
+          outline
+          color="secondary"
+          class="full-width"
+          :label="t('auth.provider.gitlab')"
+          :href="oauthStartUrl('/api/v1/auth/gitlab/start')"
           type="a"
         />
 
@@ -33,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
@@ -52,14 +68,13 @@ const loading = ref(false);
 
 const isDev = import.meta.env.DEV;
 
-const githubStartUrl = computed(() => {
+function oauthStartUrl(path: string): string {
   const base = getApiBaseUrl();
-  const path = '/api/v1/auth/github/start';
   if (base.length === 0) {
     return path;
   }
   return `${base}${path}`;
-});
+}
 
 async function onDevLogin() {
   loading.value = true;
