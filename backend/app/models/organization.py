@@ -16,6 +16,10 @@ class Organization(Base, TimestampMixin):
     slug: Mapped[str] = mapped_column(String(96), nullable=False, index=True)
     description: Mapped[str] = mapped_column(String(2000), nullable=False, default="")
     avatar_url: Mapped[str | None] = mapped_column(String(2048), nullable=True)
+    banner_url: Mapped[str | None] = mapped_column(String(2048), nullable=True)
+    primary_color: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    secondary_color: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    accent_color: Mapped[str | None] = mapped_column(String(16), nullable=True)
     is_personal: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     owner_user_id: Mapped[uuid.UUID | None] = mapped_column(
         Uuid(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True

@@ -9,9 +9,15 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 os.environ.setdefault("ENABLE_DEV_AUTH", "true")
 
+from app.core.ratelimit import limiter
 from app.db.session import get_db
 from app.main import app
 from app.models import Base
+
+# Disable per-IP rate limiting during tests — every request shares
+# ``127.0.0.1`` so realistic limits would cause cascading 429s. Coverage for
+# the limiter itself is better added as a dedicated integration test.
+limiter.enabled = False
 
 
 @pytest.fixture
@@ -24,11 +30,17 @@ async def db_engine():
 
 
 @pytest.fixture
-async def client(db_engine):
-    TestSession = async_sessionmaker(db_engine, expire_on_commit=False, class_=AsyncSession)
+async def session_factory(db_engine):
+    """Expose the same sessionmaker the FastAPI app uses during tests so
+    individual tests can stitch together state (e.g. memberships) directly."""
 
+    return async_sessionmaker(db_engine, expire_on_commit=False, class_=AsyncSession)
+
+
+@pytest.fixture
+async def client(session_factory):
     async def override_get_db() -> AsyncIterator[AsyncSession]:
-        async with TestSession() as session:
+        async with session_factory() as session:
             yield session
 
     app.dependency_overrides[get_db] = override_get_db

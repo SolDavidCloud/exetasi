@@ -1,1 +1,282 @@
-// app global css
+// Exetasi global styles
+// ---------------------------------------------------------------------------
+// Works together with `quasar.variables.scss`. Per-org theming lives in
+// `src/composables/useOrgTheme.ts`, which sets --q-primary / --q-secondary /
+// --q-accent plus a few app-specific tokens on a wrapper element.
+
+:root {
+  // Design tokens used across the app. Quasar exposes its own --q-* vars
+  // (e.g. --q-primary), we add a few surface/neutral tokens for polish.
+  --app-radius-sm: 10px;
+  --app-radius-md: 14px;
+  --app-radius-lg: 20px;
+  --app-radius-xl: 28px;
+
+  --app-shadow-sm: 0 1px 2px rgb(15 18 34 / 0.04), 0 1px 1px rgb(15 18 34 / 0.03);
+  --app-shadow-md: 0 4px 10px rgb(15 18 34 / 0.06), 0 2px 4px rgb(15 18 34 / 0.04);
+  --app-shadow-lg: 0 18px 40px -12px rgb(15 18 34 / 0.18), 0 8px 16px -8px rgb(15 18 34 / 0.1);
+
+  --app-surface: #ffffff;
+  --app-surface-muted: #f6f7fb;
+  --app-surface-elevated: #ffffff;
+  --app-border: #e6e8ef;
+  --app-ink: #0f1222;
+  --app-ink-muted: #4b5168;
+  --app-ink-subtle: #6b7280;
+
+  --app-brand-soft: color-mix(in srgb, var(--q-primary) 14%, transparent);
+  --app-brand-softer: color-mix(in srgb, var(--q-primary) 7%, transparent);
+}
+
+.body--dark {
+  --app-surface: #141727;
+  --app-surface-muted: #10131f;
+  --app-surface-elevated: #1b1f34;
+  --app-border: #252a42;
+  --app-ink: #e8ebf4;
+  --app-ink-muted: #b9bfd4;
+  --app-ink-subtle: #8a90a8;
+
+  --app-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --app-shadow-md: 0 4px 10px rgb(0 0 0 / 0.45);
+  --app-shadow-lg: 0 20px 50px -20px rgb(0 0 0 / 0.7);
+}
+
+html,
+body {
+  font-family:
+    'Inter', 'Roboto', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue',
+    Arial, sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--app-ink);
+  background: var(--app-surface-muted);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  letter-spacing: -0.015em;
+  color: var(--app-ink);
+}
+
+a {
+  color: var(--q-primary);
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+a:hover {
+  color: color-mix(in srgb, var(--q-primary) 80%, black);
+  text-decoration: underline;
+}
+
+// Focus ring — consistent, visible, respects brand color.
+*:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--q-primary) 70%, transparent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+// --- Quasar component tweaks -------------------------------------------------
+
+.q-btn {
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  border-radius: var(--app-radius-md);
+}
+
+.q-btn--outline::before {
+  border-width: 1.25px;
+}
+
+.q-card {
+  border-radius: var(--app-radius-lg);
+  background: var(--app-surface);
+  box-shadow: var(--app-shadow-sm);
+  border: 1px solid var(--app-border);
+  transition:
+    box-shadow 180ms ease,
+    transform 180ms ease,
+    border-color 180ms ease;
+}
+
+.q-card--bordered {
+  border: 1px solid var(--app-border);
+}
+
+.q-field--outlined .q-field__control {
+  border-radius: var(--app-radius-sm);
+}
+
+.q-separator {
+  background: var(--app-border);
+}
+
+.q-drawer {
+  background: var(--app-surface);
+  border-right: 1px solid var(--app-border);
+}
+
+.q-header {
+  background: var(--app-surface);
+  color: var(--app-ink);
+  border-bottom: 1px solid var(--app-border);
+  backdrop-filter: saturate(1.2) blur(8px);
+}
+
+.body--dark .q-header {
+  background: color-mix(in srgb, var(--app-surface-elevated) 92%, transparent);
+}
+
+// --- App-specific helpers ----------------------------------------------------
+
+.app-panel {
+  background: var(--app-surface);
+  border-radius: var(--app-radius-lg);
+  border: 1px solid var(--app-border);
+  box-shadow: var(--app-shadow-sm);
+  padding: clamp(16px, 3vw, 28px);
+}
+
+.app-panel--plain {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
+.app-muted {
+  color: var(--app-ink-muted);
+}
+
+.app-subtle {
+  color: var(--app-ink-subtle);
+}
+
+.app-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--app-brand-soft);
+  color: var(--q-primary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.app-hero {
+  position: relative;
+  border-radius: var(--app-radius-xl);
+  padding: clamp(24px, 4vw, 56px);
+  background:
+    radial-gradient(1200px 300px at 0% 0%, var(--app-brand-soft), transparent 60%),
+    radial-gradient(
+      800px 300px at 100% 100%,
+      color-mix(in srgb, var(--q-secondary) 14%, transparent),
+      transparent 60%
+    ),
+    var(--app-surface);
+  border: 1px solid var(--app-border);
+  box-shadow: var(--app-shadow-md);
+  overflow: hidden;
+}
+
+.app-card-hover {
+  cursor: pointer;
+}
+.app-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--app-shadow-md);
+  border-color: color-mix(in srgb, var(--q-primary) 25%, var(--app-border));
+}
+
+.app-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.app-container {
+  max-width: 1120px;
+  margin-inline: auto;
+  padding-inline: clamp(16px, 3vw, 28px);
+}
+
+.app-container--narrow {
+  max-width: 720px;
+}
+
+// Org banner / avatar visuals -------------------------------------------------
+
+.org-banner {
+  position: relative;
+  height: clamp(120px, 22vw, 220px);
+  border-radius: var(--app-radius-lg);
+  overflow: hidden;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--q-primary) 85%, transparent),
+      color-mix(in srgb, var(--q-secondary) 80%, transparent)
+    );
+  box-shadow: var(--app-shadow-sm);
+}
+
+.org-banner__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.org-banner__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 45%, rgb(0 0 0 / 0.35));
+}
+
+.org-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    var(--q-primary),
+    color-mix(in srgb, var(--q-secondary) 90%, var(--q-primary))
+  );
+  box-shadow: var(--app-shadow-sm);
+  overflow: hidden;
+}
+
+.org-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+// Smooth link transitions for router-link based cards
+.router-link-exact-active .app-chip,
+.router-link-active .app-chip {
+  background: var(--q-primary);
+  color: white;
+}
+
+// Allow motion-reduce users to opt out
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+  }
+}

@@ -42,8 +42,11 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 
-# local .env files
+# local .env files (keep .env.example tracked)
+.env
 .env.local*
+backend/.env
+backend/.env.local*
 
 # Playwright
 /test-results/

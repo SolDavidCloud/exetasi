@@ -49,11 +49,15 @@ async def ensure_personal_organization(db: AsyncSession, user: User) -> Organiza
     return org
 
 
-async def list_organizations_for_user(db: AsyncSession, user_id: uuid.UUID) -> list[Organization]:
+async def list_organizations_for_user(
+    db: AsyncSession, user_id: uuid.UUID
+) -> list[tuple[Organization, str]]:
+    """Return (organization, caller role) tuples, ordered by org name."""
+
     result = await db.execute(
-        select(Organization)
+        select(Organization, Membership.role)
         .join(Membership, Membership.org_id == Organization.id)
         .where(Membership.user_id == user_id)
         .order_by(Organization.name)
     )
-    return list(result.scalars().all())
+    return [(org, role) for org, role in result.all()]

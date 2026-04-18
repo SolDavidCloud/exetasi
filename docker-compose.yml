@@ -6,10 +6,59 @@ services:
       POSTGRES_USER: exetasi
       POSTGRES_PASSWORD: exetasi
       POSTGRES_DB: exetasi
+    # Bind to loopback so the DB is never reachable from outside the host
+    # by mistake. Use your `DATABASE_URL` to point the backend at it.
     ports:
-      - '5432:5432'
+      - '127.0.0.1:5432:5432'
     volumes:
       - exetasi_pgdata:/var/lib/postgresql/data
 
+  valkey:
+    image: valkey/valkey:8-alpine
+    restart: unless-stopped
+    # Fail the container start if no password is provided. We intentionally
+    # do not ship a default — an unauthenticated Valkey on a shared host is
+    # a classic RCE pivot, and `:-` would silently accept an empty string.
+    environment:
+      VALKEY_PASSWORD: ${VALKEY_PASSWORD:?VALKEY_PASSWORD must be set (see .env.example)}
+    # Pass the password via argv so it never appears in the mounted config
+    # file (which would otherwise sit on disk with the secret baked in).
+    # The config file carries the hardening directives only.
+    command:
+      - valkey-server
+      - /usr/local/etc/valkey/valkey.conf
+      - --requirepass
+      - ${VALKEY_PASSWORD}
+    volumes:
+      - ./infra/valkey/valkey.conf:/usr/local/etc/valkey/valkey.conf:ro
+      - exetasi_valkey_data:/data
+    # Bind the published port to loopback only — the backend and any other
+    # local dev process can still reach it, but nothing on the LAN can.
+    ports:
+      - '127.0.0.1:6379:6379'
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'valkey-cli -a "$$VALKEY_PASSWORD" PING | grep -q PONG'
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    # Drop every Linux capability — Valkey does not need any.
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    # Give the container a read-only root FS; writable state stays on the
+    # /data volume where Valkey expects it.
+    read_only: true
+    tmpfs:
+      - /tmp:size=8m
+    ulimits:
+      nofile:
+        soft: 10032
+        hard: 10032
+
 volumes:
   exetasi_pgdata:
+  exetasi_valkey_data:

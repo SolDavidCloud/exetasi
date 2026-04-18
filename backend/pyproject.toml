@@ -13,6 +13,11 @@ dependencies = [
   "pydantic-settings>=2.8.0",
   "httpx>=0.28.0",
   "itsdangerous>=2.2.0",
+  "slowapi>=0.1.9",
+  # limits (shipped with slowapi) uses the redis-py client for both Redis
+  # and Valkey. We pin >=5 because that line ships the async Sentinel /
+  # TLS fixes and is what Valkey 8 is regression-tested against.
+  "redis>=5.0.0",
 ]
 
 [project.optional-dependencies]

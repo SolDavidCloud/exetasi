@@ -22,11 +22,6 @@ async def notifications_placeholder() -> dict[str, object]:
     return {"items": [], "phase": 8}
 
 
-@router.get("/audit-log")
-async def audit_log_placeholder() -> dict[str, object]:
-    return {"entries": [], "phase": 8}
-
-
 @router.get("/certificates/status")
 async def certificates_status_placeholder() -> dict[str, object]:
     return {"enabled": False, "phase": 8}
