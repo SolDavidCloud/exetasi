@@ -1,9 +1,6 @@
 <template>
   <q-page class="app-container q-py-xl">
-    <PageHeader
-      :title="t('admin.title')"
-      :lead="t('admin.lead')"
-    >
+    <PageHeader :title="t('admin.title')" :lead="t('admin.lead')">
       <template #actions>
         <q-input
           v-model="search"
@@ -112,9 +109,7 @@
                     @click="onToggleCreateOrgs(props.row, !props.row.can_create_orgs)"
                   >
                     <q-item-section avatar>
-                      <q-icon
-                        :name="props.row.can_create_orgs ? 'lock' : 'add_business'"
-                      />
+                      <q-icon :name="props.row.can_create_orgs ? 'lock' : 'add_business'" />
                     </q-item-section>
                     <q-item-section>
                       {{
@@ -181,6 +176,13 @@
       </div>
     </section>
 
+    <AlertsCrudPanel
+      kind="system"
+      :title="t('admin.announcements.title')"
+      :lead="t('admin.announcements.lead')"
+      class="q-mt-lg"
+    />
+
     <q-dialog v-model="banDialogOpen">
       <q-card style="min-width: 360px; max-width: 420px; width: 100%">
         <q-card-section>
@@ -224,6 +226,7 @@ import { useI18n } from 'vue-i18n';
 import { useQuasar } from 'quasar';
 import type { QTableColumn } from 'quasar';
 
+import AlertsCrudPanel from 'components/AlertsCrudPanel.vue';
 import PageHeader from 'components/PageHeader.vue';
 import { useAdminStore, type AdminUser } from 'src/stores/admin-store';
 import { useAuthStore } from 'src/stores/auth-store';
@@ -345,10 +348,7 @@ async function onUnban(row: AdminUser): Promise<void> {
 async function onTransfer(): Promise<void> {
   transferring.value = true;
   try {
-    const ok = await admin.transferOwner(
-      transferSlug.value.trim(),
-      transferNewOwner.value.trim(),
-    );
+    const ok = await admin.transferOwner(transferSlug.value.trim(), transferNewOwner.value.trim());
     if (!ok) {
       $q.notify({ type: 'negative', message: t('admin.errors.transfer') });
       return;

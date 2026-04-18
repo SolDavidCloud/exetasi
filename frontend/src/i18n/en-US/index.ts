@@ -43,10 +43,8 @@ export default {
       restart: 'After setting the variables, restart the backend and refresh this page.',
     },
     errors: {
-      oauth_state:
-        'The sign-in request expired or was tampered with. Please try signing in again.',
-      oauth_provider:
-        'We could not complete the sign-in with your provider. Please try again.',
+      oauth_state: 'The sign-in request expired or was tampered with. Please try signing in again.',
+      oauth_provider: 'We could not complete the sign-in with your provider. Please try again.',
       banned: 'Your account has been banned.',
       bannedReason: 'Reason: {reason}',
     },
@@ -106,6 +104,45 @@ export default {
     errors: {
       generic: 'The change could not be applied.',
       transfer: 'Could not transfer ownership. Check the slug and target username.',
+    },
+    announcements: {
+      title: 'System-wide announcements',
+      lead: 'Shown to every user on sign-in. Critical severity always renders on top.',
+    },
+  },
+  alerts: {
+    dismiss: 'Dismiss',
+    ok: 'Got it',
+    severity: {
+      info: 'Info',
+      warning: 'Warning',
+      critical: 'Critical',
+    },
+    crud: {
+      newCta: 'New alert',
+      formTitle: 'Create alert',
+      saveCta: 'Publish alert',
+      emptyTitle: 'No alerts configured',
+      emptyDesc: 'Create an alert to notify users on login or when they visit this organization.',
+      window: 'Active: {start} → {end}',
+      fields: {
+        title: 'Title',
+        body: 'Body',
+        severity: 'Severity',
+        startsAt: 'Starts at (optional)',
+        startsAtHint: 'Leave empty to publish immediately.',
+        endsAt: 'Ends at (optional)',
+        endsAtHint: 'Leave empty to keep active until deleted.',
+        dismissible: 'Allow users to dismiss this alert',
+      },
+      messages: {
+        created: 'Alert published.',
+        deleted: 'Alert deleted.',
+      },
+      errors: {
+        create: 'Could not publish the alert.',
+        delete: 'Could not delete the alert.',
+      },
     },
   },
   messages: {
@@ -218,6 +255,10 @@ export default {
       forbiddenTitle: 'Owners only',
       forbiddenDesc:
         'Only organization owners can edit branding and settings. Ask an owner to change your role or make the edit for you.',
+      alerts: {
+        title: 'Alerts',
+        lead: 'Shown as a dialog to members when they open this organization.',
+      },
     },
   },
   theme: {

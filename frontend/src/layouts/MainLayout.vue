@@ -44,11 +44,7 @@
             />
           </q-btn>
           <q-btn flat dense no-caps class="q-ml-sm app-user-btn">
-            <OrgAvatar
-              :name="auth.user.username"
-              :avatar-url="auth.user.avatar_url"
-              :size="32"
-            />
+            <OrgAvatar :name="auth.user.username" :avatar-url="auth.user.avatar_url" :size="32" />
             <span class="q-ml-sm gt-sm">{{ auth.user.username }}</span>
             <q-icon name="expand_more" class="q-ml-xs" />
             <q-menu anchor="bottom right" self="top right">
@@ -181,6 +177,12 @@
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <AlertDialog
+      :alerts="alerts.system"
+      kind="system"
+      @acknowledge="(id) => void alerts.acknowledge('system', id)"
+    />
   </q-layout>
 </template>
 
@@ -190,8 +192,10 @@ import { useI18n } from 'vue-i18n';
 import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 
+import AlertDialog from 'components/AlertDialog.vue';
 import AppLogo from 'components/AppLogo.vue';
 import OrgAvatar from 'components/OrgAvatar.vue';
+import { useAlertsStore } from 'src/stores/alerts-store';
 import { useAuthStore } from 'src/stores/auth-store';
 import { useMessagesStore } from 'src/stores/messages-store';
 import { useOrgsStore } from 'src/stores/orgs-store';
@@ -203,6 +207,7 @@ const router = useRouter();
 const auth = useAuthStore();
 const orgs = useOrgsStore();
 const messages = useMessagesStore();
+const alerts = useAlertsStore();
 const theme = useThemeStore();
 
 const leftDrawerOpen = ref(false);
@@ -231,9 +236,16 @@ async function refreshInbox(): Promise<void> {
   }
 }
 
+async function refreshAlerts(): Promise<void> {
+  if (auth.isAuthenticated && !alerts.systemLoaded) {
+    await alerts.refreshSystemActive();
+  }
+}
+
 onMounted(() => {
   void refreshOrgs();
   void refreshInbox();
+  void refreshAlerts();
 });
 
 watch(
@@ -242,10 +254,12 @@ watch(
     if (next) {
       void orgs.fetchAll();
       void messages.refreshInbox();
+      void alerts.refreshSystemActive();
     } else {
       orgs.items = [];
       orgs.listLoaded = false;
       messages.reset();
+      alerts.reset();
     }
   },
 );

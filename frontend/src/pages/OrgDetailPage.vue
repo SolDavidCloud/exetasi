@@ -88,6 +88,13 @@
       mode="org_owners"
       :org-slug="org.slug"
     />
+
+    <AlertDialog
+      v-if="org"
+      :alerts="orgAlertsList"
+      kind="org"
+      @acknowledge="(id) => void alerts.acknowledge('org', id)"
+    />
   </q-page>
 </template>
 
@@ -96,6 +103,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 
+import AlertDialog from 'components/AlertDialog.vue';
 import EmptyState from 'components/EmptyState.vue';
 import MessageComposeDialog from 'components/MessageComposeDialog.vue';
 import OrgAvatar from 'components/OrgAvatar.vue';
@@ -103,6 +111,7 @@ import OrgBanner from 'components/OrgBanner.vue';
 import { getApiClient } from 'src/api/client';
 import type { components } from 'src/api/generated/paths';
 import { useOrgTheme } from 'src/composables/useOrgTheme';
+import { useAlertsStore } from 'src/stores/alerts-store';
 import { useOrgsStore, type Organization } from 'src/stores/orgs-store';
 
 type Exam = components['schemas']['ExamPublic'];
@@ -110,6 +119,7 @@ type Exam = components['schemas']['ExamPublic'];
 const { t } = useI18n();
 const route = useRoute();
 const orgs = useOrgsStore();
+const alerts = useAlertsStore();
 
 const loading = ref(false);
 const examsLoading = ref(false);
@@ -122,6 +132,7 @@ const { styles: themeStyles } = useOrgTheme(org);
 
 const slugUrl = computed(() => `/#/orgs/${slug.value}`);
 const isOwner = computed(() => orgs.isOwner(slug.value));
+const orgAlertsList = computed(() => alerts.orgActive[slug.value] ?? []);
 
 async function load(): Promise<void> {
   loading.value = true;
@@ -130,7 +141,7 @@ async function load(): Promise<void> {
   } finally {
     loading.value = false;
   }
-  await loadExams();
+  await Promise.all([loadExams(), alerts.refreshOrgActive(slug.value)]);
 }
 
 async function loadExams(): Promise<void> {

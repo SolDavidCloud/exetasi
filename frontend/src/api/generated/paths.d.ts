@@ -127,6 +127,43 @@ export interface components {
     SendResult: {
       recipients: number;
     };
+    SystemAnnouncementPublic: {
+      id: string;
+      title: string;
+      body: string;
+      severity: 'info' | 'warning' | 'critical';
+      starts_at: string | null;
+      ends_at: string | null;
+      dismissible: boolean;
+      created_at: string;
+    };
+    OrgAlertPublic: {
+      id: string;
+      org_id: string;
+      title: string;
+      body: string;
+      severity: 'info' | 'warning' | 'critical';
+      starts_at: string | null;
+      ends_at: string | null;
+      dismissible: boolean;
+      created_at: string;
+    };
+    SystemAnnouncementCreate: {
+      title: string;
+      body: string;
+      severity?: 'info' | 'warning' | 'critical';
+      starts_at?: string | null;
+      ends_at?: string | null;
+      dismissible?: boolean;
+    };
+    OrgAlertCreate: {
+      title: string;
+      body: string;
+      severity?: 'info' | 'warning' | 'critical';
+      starts_at?: string | null;
+      ends_at?: string | null;
+      dismissible?: boolean;
+    };
   };
   responses: never;
   parameters: never;
@@ -918,6 +955,257 @@ export interface paths {
           content: {
             'application/json': components['schemas']['SendResult'];
           };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/announcements/active': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      responses: {
+        200: {
+          headers: Record<string, unknown>;
+          content: {
+            'application/json': Array<components['schemas']['SystemAnnouncementPublic']>;
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/announcements': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      responses: {
+        200: {
+          headers: Record<string, unknown>;
+          content: {
+            'application/json': Array<components['schemas']['SystemAnnouncementPublic']>;
+          };
+        };
+      };
+    };
+    put?: never;
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['SystemAnnouncementCreate'];
+        };
+      };
+      responses: {
+        201: {
+          headers: Record<string, unknown>;
+          content: {
+            'application/json': components['schemas']['SystemAnnouncementPublic'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/announcements/{announcement_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: { announcement_id: string };
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: { announcement_id: string };
+        cookie?: never;
+      };
+      responses: {
+        204: {
+          headers: Record<string, unknown>;
+          content?: never;
+        };
+      };
+    };
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/orgs/{org_slug}/alerts/active': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: { org_slug: string };
+      cookie?: never;
+    };
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: { org_slug: string };
+        cookie?: never;
+      };
+      responses: {
+        200: {
+          headers: Record<string, unknown>;
+          content: {
+            'application/json': Array<components['schemas']['OrgAlertPublic']>;
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/orgs/{org_slug}/alerts': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: { org_slug: string };
+      cookie?: never;
+    };
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: { org_slug: string };
+        cookie?: never;
+      };
+      responses: {
+        200: {
+          headers: Record<string, unknown>;
+          content: {
+            'application/json': Array<components['schemas']['OrgAlertPublic']>;
+          };
+        };
+      };
+    };
+    put?: never;
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: { org_slug: string };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['OrgAlertCreate'];
+        };
+      };
+      responses: {
+        201: {
+          headers: Record<string, unknown>;
+          content: {
+            'application/json': components['schemas']['OrgAlertPublic'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/orgs/{org_slug}/alerts/{alert_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: { org_slug: string; alert_id: string };
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: { org_slug: string; alert_id: string };
+        cookie?: never;
+      };
+      responses: {
+        204: {
+          headers: Record<string, unknown>;
+          content?: never;
+        };
+      };
+    };
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/alerts/{kind}/{alert_id}/ack': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: { kind: 'system' | 'org'; alert_id: string };
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: { kind: 'system' | 'org'; alert_id: string };
+        cookie?: never;
+      };
+      responses: {
+        204: {
+          headers: Record<string, unknown>;
+          content?: never;
         };
       };
     };

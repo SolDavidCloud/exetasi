@@ -1,3 +1,4 @@
+from app.models.alert import AlertAcknowledgement, OrgAlert, SystemAnnouncement
 from app.models.audit import AuditLog
 from app.models.base import Base, TimestampMixin
 from app.models.exam import Exam, ExamVersion, Section
@@ -18,4 +19,7 @@ __all__ = [
     "Section",
     "AuditLog",
     "Message",
+    "SystemAnnouncement",
+    "OrgAlert",
+    "AlertAcknowledgement",
 ]
