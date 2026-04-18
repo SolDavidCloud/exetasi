@@ -40,6 +40,11 @@ export default defineRouter((/* { store, ssrContext } */) => {
     if (to.meta.requiresAuth === true && !auth.isAuthenticated) {
       return { name: 'login', query: { redirect: to.fullPath } };
     }
+    if (to.meta.requiresSuperuser === true && !auth.isSuperuser) {
+      // Non-super-users are bounced to the 404 page, matching the API's
+      // "404 on the admin surface" policy so we don't leak its existence.
+      return { name: 'home' };
+    }
     return true;
   });
 

@@ -31,7 +31,28 @@ async def get_current_user(
     user = await get_user_by_id(db, row.user_id)
     if user is None:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+    # Banned users lose access even on an already-established session. The ban
+    # is enforced here (not only at login) so an active session cannot outlive
+    # a ban decision. `admin_service.ban_user` revokes sessions too, but this
+    # belt-and-braces check keeps the system safe if a ban was applied via a
+    # direct DB edit or a race.
+    if user.is_banned:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, detail="Account banned")
     return user
+
+
+async def get_current_superuser(
+    current: Annotated[User, Depends(get_current_user)],
+) -> User:
+    """Authenticated, not banned, AND flagged as platform super-user.
+
+    Intentionally returns 404 (not 403) so non-super-users cannot enumerate
+    the existence of the admin surface.
+    """
+
+    if not current.is_superuser:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Not found")
+    return current
 
 
 async def get_optional_user(

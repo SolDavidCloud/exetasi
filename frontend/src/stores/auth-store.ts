@@ -8,6 +8,8 @@ export interface AuthUser {
   username: string;
   bio: string;
   avatar_url: string | null;
+  is_superuser: boolean;
+  can_create_orgs: boolean;
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -15,6 +17,10 @@ export const useAuthStore = defineStore('auth', () => {
   const loaded = ref(false);
 
   const isAuthenticated = computed(() => user.value !== null);
+  const isSuperuser = computed(() => user.value?.is_superuser === true);
+  const canCreateOrgs = computed(
+    () => user.value?.is_superuser === true || user.value?.can_create_orgs === true,
+  );
 
   async function fetchSession(): Promise<void> {
     const { data, error } = await getApiClient().GET('/api/v1/users/me');
@@ -31,6 +37,20 @@ export const useAuthStore = defineStore('auth', () => {
       body: { username },
     });
     if (error) {
+      // If the backend returned a structured "banned" detail, surface it up
+      // to the login page so it can render the reason inline — same UX as
+      // the OAuth ban redirect.
+      const detail = (error as { detail?: unknown }).detail;
+      if (detail && typeof detail === 'object' && 'code' in detail) {
+        const code = (detail as { code?: unknown }).code;
+        if (code === 'banned') {
+          const reason =
+            'reason' in detail && typeof (detail as { reason: unknown }).reason === 'string'
+              ? (detail as { reason: string }).reason
+              : '';
+          throw new Error(`banned:${reason}`);
+        }
+      }
       throw new Error('login_failed');
     }
     await fetchSession();
@@ -45,6 +65,8 @@ export const useAuthStore = defineStore('auth', () => {
     user,
     loaded,
     isAuthenticated,
+    isSuperuser,
+    canCreateOrgs,
     fetchSession,
     devLogin,
     logout,

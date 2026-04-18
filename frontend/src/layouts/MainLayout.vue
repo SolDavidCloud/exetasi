@@ -1,56 +1,155 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
+  <q-layout view="hHh Lpr lff">
+    <q-header flat class="app-header">
+      <q-toolbar class="app-container">
         <q-btn
           flat
           dense
           round
           icon="menu"
+          class="lt-md"
           :aria-label="t('layout.menu')"
           @click="toggleLeftDrawer"
         />
+        <AppLogo class="q-mr-md" />
 
-        <q-toolbar-title>
-          {{ t('app.title') }}
-        </q-toolbar-title>
+        <q-space />
 
-        <div class="text-caption">Quasar v{{ $q.version }}</div>
+        <q-btn
+          flat
+          round
+          dense
+          :icon="themeIcon"
+          :aria-label="t('layout.toggleTheme')"
+          :aria-pressed="theme.isDark"
+          @click="theme.toggle"
+        />
+
+        <template v-if="auth.isAuthenticated && auth.user">
+          <q-btn flat dense no-caps class="q-ml-sm app-user-btn">
+            <OrgAvatar
+              :name="auth.user.username"
+              :avatar-url="auth.user.avatar_url"
+              :size="32"
+            />
+            <span class="q-ml-sm gt-sm">{{ auth.user.username }}</span>
+            <q-icon name="expand_more" class="q-ml-xs" />
+            <q-menu anchor="bottom right" self="top right">
+              <q-list style="min-width: 200px">
+                <q-item clickable v-close-popup :to="{ name: 'profile' }">
+                  <q-item-section avatar>
+                    <q-icon name="person" />
+                  </q-item-section>
+                  <q-item-section>{{ t('profile.title') }}</q-item-section>
+                </q-item>
+                <q-item clickable v-close-popup :to="{ name: 'orgs' }">
+                  <q-item-section avatar>
+                    <q-icon name="groups" />
+                  </q-item-section>
+                  <q-item-section>{{ t('orgs.title') }}</q-item-section>
+                </q-item>
+                <q-item v-if="auth.isSuperuser" clickable v-close-popup :to="{ name: 'admin' }">
+                  <q-item-section avatar>
+                    <q-icon name="shield_person" color="primary" />
+                  </q-item-section>
+                  <q-item-section>{{ t('admin.navTitle') }}</q-item-section>
+                </q-item>
+                <q-separator />
+                <q-item clickable v-close-popup @click="onLogout">
+                  <q-item-section avatar>
+                    <q-icon name="logout" />
+                  </q-item-section>
+                  <q-item-section>{{ t('auth.logout') }}</q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
+        </template>
+        <template v-else>
+          <q-btn
+            unelevated
+            color="primary"
+            class="q-ml-sm"
+            :to="{ name: 'login' }"
+            :label="t('auth.loginNav')"
+          />
+        </template>
       </q-toolbar>
     </q-header>
 
     <q-drawer
       v-model="leftDrawerOpen"
       show-if-above
+      :width="260"
+      :breakpoint="1024"
       bordered
       :aria-label="t('layout.drawerAria')"
     >
-      <q-list padding>
-        <q-item clickable :to="{ name: 'home' }" exact>
-          <q-item-section avatar>
-            <q-icon name="home" />
-          </q-item-section>
-          <q-item-section>{{ t('home.title') }}</q-item-section>
-        </q-item>
-        <q-item v-if="auth.isAuthenticated" clickable :to="{ name: 'orgs' }">
-          <q-item-section avatar>
-            <q-icon name="groups" />
-          </q-item-section>
-          <q-item-section>{{ t('orgs.title') }}</q-item-section>
-        </q-item>
-        <q-item v-if="auth.isAuthenticated" clickable :to="{ name: 'profile' }">
-          <q-item-section avatar>
-            <q-icon name="person" />
-          </q-item-section>
-          <q-item-section>{{ t('profile.title') }}</q-item-section>
-        </q-item>
-        <q-item v-else clickable :to="{ name: 'login' }">
-          <q-item-section avatar>
-            <q-icon name="login" />
-          </q-item-section>
-          <q-item-section>{{ t('auth.loginNav') }}</q-item-section>
-        </q-item>
-      </q-list>
+      <div class="app-drawer">
+        <div class="app-drawer__section">
+          <p class="app-drawer__heading">{{ t('layout.sections.explore') }}</p>
+          <q-list padding>
+            <q-item clickable :to="{ name: 'home' }" exact>
+              <q-item-section avatar>
+                <q-icon name="home" />
+              </q-item-section>
+              <q-item-section>{{ t('home.navTitle') }}</q-item-section>
+            </q-item>
+            <q-item v-if="auth.isAuthenticated" clickable :to="{ name: 'orgs' }">
+              <q-item-section avatar>
+                <q-icon name="groups" />
+              </q-item-section>
+              <q-item-section>{{ t('orgs.title') }}</q-item-section>
+            </q-item>
+            <q-item v-if="auth.isSuperuser" clickable :to="{ name: 'admin' }">
+              <q-item-section avatar>
+                <q-icon name="shield_person" color="primary" />
+              </q-item-section>
+              <q-item-section>{{ t('admin.navTitle') }}</q-item-section>
+            </q-item>
+          </q-list>
+        </div>
+
+        <div v-if="auth.isAuthenticated && orgs.list.length" class="app-drawer__section">
+          <p class="app-drawer__heading">{{ t('layout.sections.yourOrgs') }}</p>
+          <q-list padding>
+            <q-item
+              v-for="o in orgs.list"
+              :key="o.id"
+              clickable
+              :to="{ name: 'org-detail', params: { slug: o.slug } }"
+            >
+              <q-item-section avatar>
+                <OrgAvatar
+                  :name="o.name"
+                  :avatar-url="o.avatar_url"
+                  :primary-color="o.primary_color"
+                  :secondary-color="o.secondary_color"
+                  :size="28"
+                />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ o.name }}</q-item-label>
+                <q-item-label caption>
+                  {{ o.slug }} · {{ t(`orgs.roles.${o.role}`) }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </div>
+
+        <div v-if="auth.isAuthenticated" class="app-drawer__section">
+          <p class="app-drawer__heading">{{ t('layout.sections.account') }}</p>
+          <q-list padding>
+            <q-item clickable :to="{ name: 'profile' }">
+              <q-item-section avatar>
+                <q-icon name="person" />
+              </q-item-section>
+              <q-item-section>{{ t('profile.title') }}</q-item-section>
+            </q-item>
+          </q-list>
+        </div>
+      </div>
     </q-drawer>
 
     <q-page-container>
@@ -60,17 +159,83 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useQuasar } from 'quasar';
+import { useRouter } from 'vue-router';
 
+import AppLogo from 'components/AppLogo.vue';
+import OrgAvatar from 'components/OrgAvatar.vue';
 import { useAuthStore } from 'src/stores/auth-store';
+import { useOrgsStore } from 'src/stores/orgs-store';
+import { useThemeStore } from 'src/stores/theme-store';
 
 const { t } = useI18n();
+const $q = useQuasar();
+const router = useRouter();
 const auth = useAuthStore();
+const orgs = useOrgsStore();
+const theme = useThemeStore();
 
 const leftDrawerOpen = ref(false);
+
+const themeIcon = computed(() => (theme.isDark ? 'light_mode' : 'dark_mode'));
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
+
+async function onLogout(): Promise<void> {
+  await auth.logout();
+  $q.notify({ type: 'info', message: t('auth.loggedOut') });
+  await router.replace({ name: 'home' });
+}
+
+async function refreshOrgs(): Promise<void> {
+  if (auth.isAuthenticated && !orgs.listLoaded) {
+    await orgs.fetchAll();
+  }
+}
+
+onMounted(() => {
+  void refreshOrgs();
+});
+
+watch(
+  () => auth.isAuthenticated,
+  (next) => {
+    if (next) {
+      void orgs.fetchAll();
+    } else {
+      orgs.items = [];
+      orgs.listLoaded = false;
+    }
+  },
+);
 </script>
+
+<style scoped lang="scss">
+.app-header {
+  position: sticky;
+  top: 0;
+}
+.app-user-btn {
+  border-radius: 999px;
+  padding: 4px 10px 4px 4px;
+}
+.app-drawer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 16px 8px;
+}
+.app-drawer__heading {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--app-ink-subtle);
+  padding: 0 12px;
+  margin: 0 0 6px;
+}
+</style>

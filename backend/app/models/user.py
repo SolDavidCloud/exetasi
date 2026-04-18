@@ -18,6 +18,16 @@ class User(Base, TimestampMixin):
     bio: Mapped[str] = mapped_column(String(512), default="")
     avatar_url: Mapped[str | None] = mapped_column(String(2048), nullable=True)
     is_deleted: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    # Platform-level role flags. Governed by `admin_service` (super-user only
+    # mutation surface). `is_superuser` grants access to the admin screen and
+    # is always allowed to create organizations regardless of
+    # `can_create_orgs`. `is_banned` short-circuits login and hides the user's
+    # visible content from others; `ban_reason` is shown to the banned user on
+    # their next login attempt.
+    is_superuser: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    is_banned: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    ban_reason: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    can_create_orgs: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
     oauth_accounts: Mapped[list[OAuthAccount]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
