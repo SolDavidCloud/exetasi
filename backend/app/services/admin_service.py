@@ -12,8 +12,6 @@ audit trails stay in the same transaction as the mutation.
 
 from __future__ import annotations
 
-import uuid
-
 from fastapi import HTTPException, status
 from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -240,7 +238,9 @@ async def transfer_org_ownership(
 
 async def count_superusers(db: AsyncSession) -> int:
     result = await db.execute(
-        select(func.count()).select_from(User).where(
+        select(func.count())
+        .select_from(User)
+        .where(
             User.is_superuser.is_(True),
             User.is_deleted.is_(False),
             User.is_banned.is_(False),

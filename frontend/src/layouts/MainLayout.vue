@@ -26,6 +26,23 @@
         />
 
         <template v-if="auth.isAuthenticated && auth.user">
+          <q-btn
+            flat
+            round
+            dense
+            icon="inbox"
+            class="q-ml-sm"
+            :aria-label="t('messages.navTitle')"
+            :to="{ name: 'messages' }"
+          >
+            <q-badge
+              v-if="messages.unread > 0"
+              floating
+              color="negative"
+              rounded
+              :label="String(messages.unread)"
+            />
+          </q-btn>
           <q-btn flat dense no-caps class="q-ml-sm app-user-btn">
             <OrgAvatar
               :name="auth.user.username"
@@ -147,6 +164,15 @@
               </q-item-section>
               <q-item-section>{{ t('profile.title') }}</q-item-section>
             </q-item>
+            <q-item clickable :to="{ name: 'messages' }">
+              <q-item-section avatar>
+                <q-icon name="inbox" />
+              </q-item-section>
+              <q-item-section>{{ t('messages.navTitle') }}</q-item-section>
+              <q-item-section v-if="messages.unread > 0" side>
+                <q-badge color="negative" rounded>{{ messages.unread }}</q-badge>
+              </q-item-section>
+            </q-item>
           </q-list>
         </div>
       </div>
@@ -167,6 +193,7 @@ import { useRouter } from 'vue-router';
 import AppLogo from 'components/AppLogo.vue';
 import OrgAvatar from 'components/OrgAvatar.vue';
 import { useAuthStore } from 'src/stores/auth-store';
+import { useMessagesStore } from 'src/stores/messages-store';
 import { useOrgsStore } from 'src/stores/orgs-store';
 import { useThemeStore } from 'src/stores/theme-store';
 
@@ -175,6 +202,7 @@ const $q = useQuasar();
 const router = useRouter();
 const auth = useAuthStore();
 const orgs = useOrgsStore();
+const messages = useMessagesStore();
 const theme = useThemeStore();
 
 const leftDrawerOpen = ref(false);
@@ -197,8 +225,15 @@ async function refreshOrgs(): Promise<void> {
   }
 }
 
+async function refreshInbox(): Promise<void> {
+  if (auth.isAuthenticated) {
+    await messages.refreshInbox();
+  }
+}
+
 onMounted(() => {
   void refreshOrgs();
+  void refreshInbox();
 });
 
 watch(
@@ -206,9 +241,11 @@ watch(
   (next) => {
     if (next) {
       void orgs.fetchAll();
+      void messages.refreshInbox();
     } else {
       orgs.items = [];
       orgs.listLoaded = false;
+      messages.reset();
     }
   },
 );

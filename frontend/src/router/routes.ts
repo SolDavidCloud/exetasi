@@ -36,6 +36,12 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/OrgSettingsPage.vue'),
       },
       {
+        path: 'messages',
+        name: 'messages',
+        meta: { requiresAuth: true },
+        component: () => import('pages/InboxPage.vue'),
+      },
+      {
         path: 'admin',
         name: 'admin',
         meta: { requiresAuth: true, requiresSuperuser: true },

@@ -97,6 +97,36 @@ export interface components {
       target_id: string | null;
       metadata: Record<string, unknown>;
     };
+    MessagePublic: {
+      id: string;
+      sender_id: string | null;
+      sender_username: string | null;
+      recipient_id: string;
+      recipient_username: string | null;
+      target_kind: 'direct' | 'org_owners' | 'superusers';
+      target_org_id: string | null;
+      target_org_slug: string | null;
+      body: string;
+      created_at: string;
+      read_at: string | null;
+    };
+    MessageInbox: {
+      items: Array<components['schemas']['MessagePublic']>;
+      unread: number;
+    };
+    SendToUserRequest: {
+      recipient_username: string;
+      body: string;
+    };
+    SendToOrgOwnersRequest: {
+      body: string;
+    };
+    SendToSuperusersRequest: {
+      body: string;
+    };
+    SendResult: {
+      recipients: number;
+    };
   };
   responses: never;
   parameters: never;
@@ -655,6 +685,238 @@ export interface paths {
           headers: Record<string, unknown>;
           content: {
             'application/json': components['schemas']['OrganizationPublic'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/messages': {
+    parameters: {
+      query?: { unread?: boolean; limit?: number; offset?: number };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: {
+      parameters: {
+        query?: { unread?: boolean; limit?: number; offset?: number };
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      responses: {
+        200: {
+          headers: Record<string, unknown>;
+          content: {
+            'application/json': components['schemas']['MessageInbox'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/messages/sent': {
+    parameters: {
+      query?: { limit?: number; offset?: number };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: {
+      parameters: {
+        query?: { limit?: number; offset?: number };
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      responses: {
+        200: {
+          headers: Record<string, unknown>;
+          content: {
+            'application/json': Array<components['schemas']['MessagePublic']>;
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/messages/to-user': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['SendToUserRequest'];
+        };
+      };
+      responses: {
+        201: {
+          headers: Record<string, unknown>;
+          content: {
+            'application/json': components['schemas']['MessagePublic'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/messages/to-org/{org_slug}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: { org_slug: string };
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: { org_slug: string };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['SendToOrgOwnersRequest'];
+        };
+      };
+      responses: {
+        201: {
+          headers: Record<string, unknown>;
+          content: {
+            'application/json': components['schemas']['SendResult'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/messages/to-superusers': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['SendToSuperusersRequest'];
+        };
+      };
+      responses: {
+        201: {
+          headers: Record<string, unknown>;
+          content: {
+            'application/json': components['schemas']['SendResult'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/messages/{message_id}/read': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: { message_id: string };
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: { message_id: string };
+        cookie?: never;
+      };
+      responses: {
+        200: {
+          headers: Record<string, unknown>;
+          content: {
+            'application/json': components['schemas']['MessagePublic'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/messages/read-all': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      responses: {
+        200: {
+          headers: Record<string, unknown>;
+          content: {
+            'application/json': components['schemas']['SendResult'];
           };
         };
       };
