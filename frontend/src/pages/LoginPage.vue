@@ -60,11 +60,12 @@
           />
 
           <!--
-            Operator guidance when nothing is configured. Shown above the
-            dev login so developers realise prod is unreachable.
+            OAuth setup guidance whenever no OAuth provider is enabled.
+            (Development login does not replace OAuth for real deployments;
+            show this above dev login so operators still see how to configure.)
           -->
           <div
-            v-if="providers && !anyOauthEnabled && !providers.dev"
+            v-if="providers && !anyOauthEnabled"
             class="app-panel app-panel--muted column q-gutter-sm"
           >
             <div class="row items-center q-gutter-sm">
@@ -79,13 +80,11 @@
                 {{ t('auth.noProviders.env') }}
                 <code>GOOGLE_CLIENT_ID</code>, <code>GOOGLE_CLIENT_SECRET</code>
               </li>
+              <li><code>GITHUB_CLIENT_ID</code>, <code>GITHUB_CLIENT_SECRET</code></li>
               <li>
-                <code>GITHUB_CLIENT_ID</code>, <code>GITHUB_CLIENT_SECRET</code>
-              </li>
-              <li>
-                <code>GITLAB_CLIENT_ID</code>, <code>GITLAB_CLIENT_SECRET</code>
-                ({{ t('auth.noProviders.optional') }}:
-                <code>GITLAB_OAUTH_BASE_URL</code>)
+                <code>GITLAB_CLIENT_ID</code>, <code>GITLAB_CLIENT_SECRET</code> ({{
+                  t('auth.noProviders.optional')
+                }}: <code>GITLAB_OAUTH_BASE_URL</code>)
               </li>
               <li>
                 {{ t('auth.noProviders.devAlt') }}
@@ -149,7 +148,9 @@ const providers = ref<AuthProviders | null>(null);
 const loadingProviders = ref(true);
 
 const anyOauthEnabled = computed(
-  () => !!providers.value && (providers.value.google || providers.value.github || providers.value.gitlab),
+  () =>
+    !!providers.value &&
+    (providers.value.google || providers.value.github || providers.value.gitlab),
 );
 
 const oauthError = computed(() => {
@@ -192,6 +193,9 @@ async function fetchProviders(): Promise<void> {
     } else {
       providers.value = data;
     }
+  } catch {
+    // Network / client errors: same fail-open so the login page never renders empty.
+    providers.value = { google: false, github: false, gitlab: false, dev: false };
   } finally {
     loadingProviders.value = false;
   }
@@ -211,9 +215,7 @@ async function onDevLogin() {
       const reason = err.message.slice('banned:'.length).trim();
       await router.replace({
         name: 'login',
-        query: reason
-          ? { error: 'banned', reason }
-          : { error: 'banned' },
+        query: reason ? { error: 'banned', reason } : { error: 'banned' },
       });
       return;
     }

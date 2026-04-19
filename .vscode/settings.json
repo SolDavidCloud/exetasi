@@ -14,9 +14,25 @@
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "cSpell.words": [
+    "exetasi",
     "Exetasi",
+    "fastapi",
+    "FLUSHALL",
+    "FLUSHDB",
+    "nerdctl",
     "PKCE",
+    "postgres",
+    "ratelimit",
+    "rediss",
+    "reqs",
+    "Sanitise",
+    "slowapi",
     "Supabase",
+    "theming",
+    "urlsafe",
+    "uvicorn",
+    "valkey",
+    "Valkey",
     "WCAG"
   ]
 }

@@ -63,7 +63,7 @@
                 </q-item>
                 <q-item v-if="auth.isSuperuser" clickable v-close-popup :to="{ name: 'admin' }">
                   <q-item-section avatar>
-                    <q-icon name="shield_person" color="primary" />
+                    <q-icon name="admin_panel_settings" size="24px" color="primary" />
                   </q-item-section>
                   <q-item-section>{{ t('admin.navTitle') }}</q-item-section>
                 </q-item>
@@ -104,19 +104,24 @@
           <q-list padding>
             <q-item clickable :to="{ name: 'home' }" exact>
               <q-item-section avatar>
-                <q-icon name="home" />
+                <q-icon class="app-drawer__nav-icon" name="home" size="24px" />
               </q-item-section>
               <q-item-section>{{ t('home.navTitle') }}</q-item-section>
             </q-item>
             <q-item v-if="auth.isAuthenticated" clickable :to="{ name: 'orgs' }">
               <q-item-section avatar>
-                <q-icon name="groups" />
+                <q-icon class="app-drawer__nav-icon" name="groups" size="24px" />
               </q-item-section>
               <q-item-section>{{ t('orgs.title') }}</q-item-section>
             </q-item>
             <q-item v-if="auth.isSuperuser" clickable :to="{ name: 'admin' }">
               <q-item-section avatar>
-                <q-icon name="shield_person" color="primary" />
+                <q-icon
+                  class="app-drawer__nav-icon text-primary"
+                  name="admin_panel_settings"
+                  size="24px"
+                  aria-hidden="true"
+                />
               </q-item-section>
               <q-item-section>{{ t('admin.navTitle') }}</q-item-section>
             </q-item>
@@ -156,13 +161,13 @@
           <q-list padding>
             <q-item clickable :to="{ name: 'profile' }">
               <q-item-section avatar>
-                <q-icon name="person" />
+                <q-icon class="app-drawer__nav-icon" name="person" size="24px" />
               </q-item-section>
               <q-item-section>{{ t('profile.title') }}</q-item-section>
             </q-item>
             <q-item clickable :to="{ name: 'messages' }">
               <q-item-section avatar>
-                <q-icon name="inbox" />
+                <q-icon class="app-drawer__nav-icon" name="inbox" size="24px" />
               </q-item-section>
               <q-item-section>{{ t('messages.navTitle') }}</q-item-section>
               <q-item-section v-if="messages.unread > 0" side>
@@ -288,5 +293,20 @@ watch(
   color: var(--app-ink-subtle);
   padding: 0 12px;
   margin: 0 0 6px;
+}
+
+/* Fixed-width icon rail so every drawer row’s label starts on the same x (incl. Admin vs Profile) */
+.app-drawer :deep(.q-item .q-item__section--avatar) {
+  width: 48px;
+  min-width: 48px;
+  max-width: 48px;
+  flex: 0 0 48px;
+  align-items: center;
+  justify-content: center;
+}
+.app-drawer__nav-icon {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
 }
 </style>

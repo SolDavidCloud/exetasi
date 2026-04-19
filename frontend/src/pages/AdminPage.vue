@@ -28,6 +28,7 @@
       <q-table
         flat
         bordered
+        wrap-cells
         :rows="admin.users"
         :columns="columns"
         row-key="id"
@@ -36,21 +37,21 @@
         :no-data-label="t('admin.users.empty')"
       >
         <template #body-cell-flags="props">
-          <q-td :props="props">
-            <div class="row q-gutter-xs">
+          <q-td :props="props" class="admin-flags-cell">
+            <div class="admin-flags-stack">
               <q-chip
                 v-if="props.row.is_superuser"
-                dense
+                class="admin-status-chip"
                 color="primary"
                 text-color="white"
                 size="sm"
-                icon="shield_person"
+                icon="admin_panel_settings"
               >
                 {{ t('admin.flags.superuser') }}
               </q-chip>
               <q-chip
                 v-if="props.row.can_create_orgs && !props.row.is_superuser"
-                dense
+                class="admin-status-chip"
                 color="secondary"
                 text-color="white"
                 size="sm"
@@ -60,7 +61,7 @@
               </q-chip>
               <q-chip
                 v-if="props.row.is_banned"
-                dense
+                class="admin-status-chip"
                 color="negative"
                 text-color="white"
                 size="sm"
@@ -260,6 +261,7 @@ const columns: QTableColumn<AdminUser>[] = [
     label: t('admin.cols.flags'),
     align: 'left',
     field: 'id',
+    style: 'min-width: 168px; max-width: 260px;',
   },
   {
     name: 'banReason',
@@ -376,5 +378,29 @@ onMounted(() => {
   font-size: 1.25rem;
   font-weight: 700;
   margin: 0;
+}
+
+.admin-flags-cell {
+  vertical-align: top;
+  white-space: normal;
+}
+
+.admin-flags-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.admin-status-chip {
+  font-weight: 600;
+}
+.admin-status-chip :deep(.q-chip__content) {
+  padding: 5px 10px 5px 4px;
+}
+.admin-status-chip :deep(.q-chip__icon--left) {
+  margin: 0 5px 0 0;
+  font-size: 1.05em;
+  opacity: 1;
 }
 </style>

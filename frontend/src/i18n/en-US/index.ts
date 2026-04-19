@@ -35,8 +35,8 @@ export default {
     logout: 'Sign out',
     loggedOut: 'Signed out.',
     noProviders: {
-      title: 'No sign-in methods configured',
-      lead: 'An administrator must configure at least one OAuth provider before users can sign in. Set the following environment variables on the backend:',
+      title: 'OAuth not configured',
+      lead: 'To enable Google, GitHub, or GitLab sign-in, set the following environment variables on the backend:',
       env: 'One of:',
       optional: 'optional',
       devAlt: 'Or, for local development only, start the backend with',

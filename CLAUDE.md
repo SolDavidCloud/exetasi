@@ -5,7 +5,7 @@ Free, open-source quiz and exam web application. See `Requirements.md` for the f
 ## Stack
 
 | Layer | Technology |
-|-------|-----------|
+| ----- | ------------ |
 | Frontend | Quasar 2 (Vue 3 / TypeScript), SPA + Capacitor mobile wrapper |
 | Backend | FastAPI (Python) — separate project/repo |
 | Database | PostgreSQL (primary store) |
@@ -44,7 +44,7 @@ pnpm format     # Prettier
 
 ## Project Structure
 
-```
+```text
 frontend/
   src/
     assets/       static assets
@@ -61,26 +61,31 @@ backend/          FastAPI app (see backend/README.md)
 ## Code Conventions
 
 ### Vue
+
 - Always use `<script setup lang="ts">` — no Options API, no `export default defineComponent()`
 - Use `defineProps`, `defineEmits`, `defineModel` — no runtime declarations without types
 - PascalCase component filenames; Quasar components (`QBtn`, `QCard`, `QInput`) over native HTML equivalents
 - Scoped styles in SFCs; global tokens via `quasar.variables.scss`
 
 ### TypeScript
+
 - Strict mode is on — no `any`, no unchecked `as` casts
 - Prefer `interface` for shapes, `type` for unions/intersections
 - Import Quasar config types via `#q-app/wrappers`
 
 ### Pinia
+
 - One store per domain concept (e.g., `useAuthStore`, `useExamStore`)
 - Use setup-syntax stores (`defineStore('id', () => { ... })`)
 - Keep side-effects (API calls) inside actions, not in components
 
 ### i18n
+
 - All user-visible strings go through `useI18n().t('key')` — never hardcode UI copy
 - Keys are scoped by feature: `exam.title`, `section.description`, etc.
 
 ### Styling
+
 - Quasar utility classes preferred over custom CSS where possible
 - Custom SCSS lives in `frontend/src/css/`; component-scoped styles for component-specific overrides
 
@@ -135,7 +140,7 @@ Full rationale in [`docs/plans/exetasi-implementation-plan.md`](docs/plans/exeta
 
 Full specification in `Requirements.md`. Key entity hierarchy:
 
-```
+```text
 User → Organization → Exam → Version → Section → Question → Answer
 ```
 

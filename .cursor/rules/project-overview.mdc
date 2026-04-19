@@ -8,12 +8,14 @@ alwaysApply: true
 Quiz and exam webapp (monorepo). Full spec in `Requirements.md`.
 
 ## Stack
+
 - Frontend: **Quasar 2** (Vue 3 / TypeScript) in `frontend/`, hash-mode SPA + Capacitor mobile
 - Backend: **FastAPI** (Python) in `backend/`, REST API
 - Database: **PostgreSQL** (root `docker-compose.yml`; `make db-up` from repo root)
 - State: **Pinia** | Routing: **Vue Router 4** | i18n: **vue-i18n 11**
 
 ## Commands
+
 Repository root / `frontend/` as appropriate:
 
 ```bash
@@ -27,6 +29,7 @@ pnpm format   # Prettier
 ```
 
 ## Non-Negotiable Conventions
+
 - **pnpm only** — never suggest npm or yarn commands
 - **`<script setup lang="ts">`** in every SFC — no Options API
 - **All UI strings through `t('key')`** — no hardcoded copy anywhere
